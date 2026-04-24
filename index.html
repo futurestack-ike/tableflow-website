@@ -1,0 +1,767 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>TableFlow — Smart POS for Restaurants</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,500;12..96,700;12..96,800&family=Lora:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet"/>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --p:#2563eb;--pl:#3b82f6;--pd:#1d4ed8;--pp:#eff6ff;
+  --acc:#f97316;--accd:#ea6c0a;--accf:#fff7ed;
+  --dark:#0f0f1a;--dark2:#1a1a2e;
+  --bg:#f9fafb;--card:#fff;
+  --text:#0f172a;--muted:#64748b;
+  --border:#e2e8f0;
+  --head:'Bricolage Grotesque',sans-serif;
+  --body:'Lora',Georgia,serif;
+  --sh:0 4px 24px rgba(37,99,235,.1);
+}
+html{scroll-behavior:smooth;}
+body{font-family:var(--head);background:var(--bg);color:var(--text);overflow-x:hidden;}
+
+/* ── NAV ── */
+.nav{position:fixed;top:0;left:0;right:0;z-index:200;display:flex;align-items:center;padding:0 40px;height:64px;background:rgba(249,250,251,.92);backdrop-filter:blur(16px);border-bottom:1px solid var(--border);}
+.nav-logo{font-size:20px;font-weight:800;color:var(--p);margin-right:auto;letter-spacing:-0.5px;display:flex;align-items:center;gap:8px;}
+.nav-logo-icon{width:32px;height:32px;background:var(--p);border-radius:8px;display:flex;align-items:center;justify-content:center;color:#fff;font-size:16px;}
+.nav-links{display:flex;gap:32px;margin-right:32px;}
+.nav-link{color:var(--muted);font-size:14px;font-weight:500;text-decoration:none;transition:color .2s;}
+.nav-link:hover{color:var(--text);}
+.lang-btn{background:none;border:1.5px solid var(--border);border-radius:6px;padding:5px 12px;font-family:var(--head);font-size:12px;font-weight:600;cursor:pointer;color:var(--muted);transition:all .2s;margin-left:6px;}
+.lang-btn.active{background:var(--p);border-color:var(--p);color:#fff;}
+.nav-cta{background:var(--p);color:#fff;border:none;border-radius:8px;padding:9px 20px;font-family:var(--head);font-size:13px;font-weight:700;cursor:pointer;transition:all .2s;margin-left:16px;text-decoration:none;}
+.nav-cta:hover{background:var(--pd);transform:translateY(-1px);}
+
+/* ── HERO ── */
+.hero{min-height:100vh;display:flex;align-items:center;padding-top:64px;position:relative;overflow:hidden;background:var(--dark);}
+.hero-mesh{position:absolute;inset:0;background:radial-gradient(ellipse 80% 60% at 60% 40%,rgba(37,99,235,.35) 0%,transparent 70%),radial-gradient(ellipse 50% 50% at 20% 80%,rgba(249,115,22,.2) 0%,transparent 60%),radial-gradient(ellipse 40% 40% at 80% 10%,rgba(37,99,235,.15) 0%,transparent 60%);}
+.hero-grid{position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,.03) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.03) 1px,transparent 1px);background-size:60px 60px;}
+.hero-inner{position:relative;z-index:2;max-width:1200px;margin:0 auto;padding:80px 40px;display:grid;grid-template-columns:1fr 1.1fr;gap:60px;align-items:center;}
+.hero-badge{display:inline-flex;align-items:center;gap:8px;background:rgba(249,115,22,.15);border:1px solid rgba(249,115,22,.3);color:#fb923c;border-radius:20px;padding:6px 16px;font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;margin-bottom:20px;}
+.badge-dot{width:6px;height:6px;border-radius:50%;background:#fb923c;animation:bdot 2s infinite;}
+@keyframes bdot{0%,100%{opacity:1;}50%{opacity:.3;}}
+.hero-h1{font-size:clamp(44px,5.5vw,76px);font-weight:800;color:#fff;line-height:1.0;letter-spacing:-2px;margin-bottom:20px;}
+.hero-h1 em{font-style:normal;background:linear-gradient(135deg,#60a5fa,#818cf8);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.hero-sub{font-family:var(--body);color:rgba(255,255,255,.6);font-size:17px;line-height:1.75;max-width:460px;margin-bottom:16px;font-weight:400;}
+.hero-budget{display:flex;align-items:center;gap:10px;background:rgba(249,115,22,.12);border:1px solid rgba(249,115,22,.25);border-radius:10px;padding:12px 16px;margin-bottom:32px;max-width:460px;}
+.hero-budget-icon{font-size:20px;}
+.hero-budget-text{font-size:13px;color:#fb923c;font-weight:600;font-family:var(--head);}
+.hero-actions{display:flex;gap:14px;flex-wrap:wrap;margin-bottom:40px;}
+.btn-acc{padding:15px 30px;border-radius:10px;font-family:var(--head);font-weight:700;font-size:15px;cursor:pointer;transition:all .2s;border:none;text-decoration:none;display:inline-flex;align-items:center;gap:8px;background:var(--acc);color:#fff;}
+.btn-acc:hover{background:var(--accd);transform:translateY(-2px);box-shadow:0 8px 24px rgba(249,115,22,.4);}
+.btn-ghost{padding:15px 30px;border-radius:10px;font-family:var(--head);font-weight:600;font-size:15px;cursor:pointer;transition:all .2s;border:1.5px solid rgba(255,255,255,.2);text-decoration:none;display:inline-flex;align-items:center;gap:8px;background:rgba(255,255,255,.06);color:rgba(255,255,255,.85);}
+.btn-ghost:hover{background:rgba(255,255,255,.12);}
+.hero-trust{display:flex;align-items:center;gap:16px;flex-wrap:wrap;}
+.trust-item{display:flex;align-items:center;gap:6px;color:rgba(255,255,255,.4);font-size:12px;font-weight:500;}
+.trust-item svg{opacity:.5;}
+
+/* ── SCREENS DEMO ── */
+.screens-wrap{display:flex;gap:16px;align-items:flex-start;justify-content:flex-end;}
+
+/* Phone frame */
+.phone-frame{background:#1e1e2e;border-radius:36px;padding:10px;box-shadow:0 32px 64px rgba(0,0,0,.5),0 0 0 1px rgba(255,255,255,.08);flex-shrink:0;position:relative;}
+.phone-frame.main{width:240px;}
+.phone-frame.side{width:200px;margin-top:40px;opacity:.75;}
+.phone-notch{width:70px;height:20px;background:#1e1e2e;border-radius:10px;position:absolute;top:10px;left:50%;transform:translateX(-50%);z-index:5;}
+.phone-screen{border-radius:28px;overflow:hidden;background:#f1f5f9;}
+
+/* Shared screen elements */
+.scr-hdr{height:54px;display:flex;align-items:center;padding:0 14px;gap:8px;}
+.scr-logo{width:28px;height:28px;border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;color:#fff;}
+.scr-brand{font-size:12px;font-weight:700;color:#fff;}
+.scr-body{padding:12px;}
+.scr-title{font-size:16px;font-weight:800;color:#0f172a;margin-bottom:2px;font-family:var(--head);}
+.scr-sub{font-size:10px;color:#64748b;margin-bottom:12px;}
+
+/* Order card */
+.scr-card{background:#fff;border-radius:10px;padding:12px;margin-bottom:8px;box-shadow:0 2px 8px rgba(0,0,0,.06);}
+.scr-card-head{font-size:11px;font-weight:700;color:#0f172a;margin-bottom:8px;display:flex;justify-content:space-between;align-items:center;}
+.scr-row{display:flex;justify-content:space-between;align-items:center;padding:5px 0;border-bottom:1px solid #f1f5f9;font-size:10px;}
+.scr-row:last-of-type{border:none;}
+.scr-row-name{color:#334155;}
+.scr-row-price{color:#2563eb;font-weight:700;}
+.scr-total{display:flex;justify-content:space-between;font-size:11px;font-weight:800;padding-top:8px;border-top:2px solid #f1f5f9;color:#0f172a;margin-top:4px;}
+.scr-badge{display:inline-flex;align-items:center;gap:3px;padding:3px 8px;border-radius:8px;font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.3px;}
+.sb-blue{background:#eff6ff;color:#2563eb;}
+.sb-orange{background:#fff7ed;color:#ea580c;}
+.sb-green{background:#f0fdf4;color:#16a34a;}
+.sb-red{background:#fef2f2;color:#dc2626;}
+
+/* Kitchen card */
+.k-card{background:#fff;border-radius:10px;margin-bottom:8px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.06);}
+.k-card-top{padding:10px 12px;display:flex;justify-content:space-between;align-items:flex-start;border-bottom:1px solid #f1f5f9;}
+.k-card-name{font-size:12px;font-weight:800;color:#0f172a;}
+.k-card-time{font-size:9px;color:#94a3b8;}
+.k-card-body{padding:8px 12px;}
+.k-item{font-size:10px;color:#334155;padding:3px 0;display:flex;gap:6px;}
+.k-qty{font-weight:700;color:#2563eb;}
+.k-card-foot{padding:8px 12px;border-top:1px solid #f1f5f9;}
+.k-btn{width:100%;padding:7px;border-radius:7px;border:none;font-family:var(--head);font-size:10px;font-weight:700;cursor:pointer;color:#fff;}
+.k-btn-orange{background:#f97316;}
+.k-btn-green{background:#16a34a;}
+
+/* Report mini */
+.rep-stat{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:8px;}
+.rep-box{background:#fff;border-radius:8px;padding:10px;box-shadow:0 2px 8px rgba(0,0,0,.06);}
+.rep-label{font-size:9px;color:#64748b;font-weight:600;text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px;}
+.rep-val{font-size:18px;font-weight:800;color:#2563eb;}
+
+/* Float tags */
+.float-tag{position:absolute;background:#fff;border-radius:12px;padding:10px 14px;box-shadow:0 8px 32px rgba(0,0,0,.18);display:flex;align-items:center;gap:8px;white-space:nowrap;}
+.ft1{bottom:-16px;right:-56px;animation:ft1 3.5s ease-in-out infinite;}
+.ft2{top:60px;left:-64px;animation:ft2 4s ease-in-out infinite;}
+@keyframes ft1{0%,100%{transform:translateY(0);}50%{transform:translateY(-7px);}}
+@keyframes ft2{0%,100%{transform:translateY(0);}50%{transform:translateY(5px);}}
+.ft-ico{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;}
+.ft-blue{background:#eff6ff;}
+.ft-orange{background:#fff7ed;}
+.ft-t{font-size:10px;color:#64748b;font-weight:500;}
+.ft-v{font-size:14px;font-weight:800;color:#0f172a;}
+
+/* ── SECTIONS ── */
+.section{padding:100px 40px;max-width:1200px;margin:0 auto;}
+.s-tag{font-size:11px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--p);margin-bottom:12px;}
+.s-h2{font-size:clamp(32px,4vw,52px);font-weight:800;letter-spacing:-1.5px;line-height:1.05;margin-bottom:16px;}
+.s-sub{font-family:var(--body);color:var(--muted);font-size:16px;line-height:1.75;max-width:560px;margin-bottom:60px;font-weight:400;}
+
+/* ── BUDGET BANNER ── */
+.budget-banner{background:linear-gradient(135deg,#1e3a5f,#1e40af);border-radius:24px;padding:56px 64px;display:grid;grid-template-columns:1fr auto;gap:40px;align-items:center;margin:0 40px 100px;max-width:1200px;margin-left:auto;margin-right:auto;}
+.bb-tag{font-size:11px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:#60a5fa;margin-bottom:12px;}
+.bb-h{font-size:clamp(28px,3.5vw,44px);font-weight:800;color:#fff;letter-spacing:-1px;line-height:1.1;margin-bottom:12px;}
+.bb-sub{font-family:var(--body);color:rgba(255,255,255,.65);font-size:15px;line-height:1.7;}
+.bb-right{display:flex;flex-direction:column;gap:16px;flex-shrink:0;}
+.bb-stat{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);border-radius:16px;padding:20px 28px;text-align:center;}
+.bb-num{font-size:40px;font-weight:800;color:#fff;line-height:1;}
+.bb-label{font-size:12px;color:rgba(255,255,255,.5);margin-top:4px;font-weight:500;}
+
+/* ── FEATURES ── */
+.feat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;}
+.feat{background:var(--card);border-radius:18px;padding:32px;border:1px solid var(--border);transition:all .25s;position:relative;overflow:hidden;}
+.feat::after{content:'';position:absolute;bottom:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--p),#818cf8);transform:scaleX(0);transform-origin:left;transition:transform .3s;}
+.feat:hover{transform:translateY(-4px);box-shadow:0 20px 48px rgba(37,99,235,.1);}
+.feat:hover::after{transform:scaleX(1);}
+.feat-ico{width:48px;height:48px;border-radius:12px;background:var(--pp);display:flex;align-items:center;justify-content:center;font-size:22px;margin-bottom:18px;}
+.feat-h{font-size:18px;font-weight:800;letter-spacing:-.5px;margin-bottom:8px;}
+.feat-p{font-family:var(--body);color:var(--muted);font-size:14px;line-height:1.7;}
+
+/* ── HOW IT WORKS ── */
+.how-wrap{background:var(--dark);border-radius:28px;padding:72px 64px;}
+.how-steps{display:grid;grid-template-columns:repeat(4,1fr);gap:32px;margin-top:56px;position:relative;}
+.how-steps::before{content:'';position:absolute;top:28px;left:10%;right:10%;height:1px;background:linear-gradient(90deg,transparent,rgba(255,255,255,.1),rgba(255,255,255,.1),transparent);}
+.how-step{text-align:center;position:relative;}
+.how-num-wrap{width:56px;height:56px;border-radius:50%;background:rgba(37,99,235,.2);border:1px solid rgba(37,99,235,.3);display:flex;align-items:center;justify-content:center;margin:0 auto 16px;position:relative;z-index:1;}
+.how-num{font-size:20px;font-weight:800;color:#60a5fa;}
+.how-ico{font-size:24px;margin-bottom:12px;}
+.how-h{font-size:16px;font-weight:700;color:#fff;margin-bottom:8px;letter-spacing:-.3px;}
+.how-p{font-family:var(--body);font-size:12px;color:rgba(255,255,255,.45);line-height:1.7;}
+
+/* ── DELIVERY ── */
+.delivery-strip{background:linear-gradient(135deg,var(--acc),#dc2626);border-radius:20px;padding:40px 56px;display:flex;align-items:center;justify-content:space-between;gap:32px;margin:0 0 100px;}
+.del-left{}
+.del-badge{display:inline-flex;align-items:center;gap:6px;background:rgba(255,255,255,.15);border-radius:20px;padding:4px 12px;font-size:11px;font-weight:700;color:#fff;letter-spacing:.8px;text-transform:uppercase;margin-bottom:12px;}
+.del-h{font-size:clamp(24px,3vw,36px);font-weight:800;color:#fff;letter-spacing:-1px;line-height:1.1;}
+.del-sub{font-family:var(--body);color:rgba(255,255,255,.75);font-size:14px;margin-top:8px;line-height:1.6;}
+.del-right{display:flex;gap:24px;flex-shrink:0;}
+.del-item{text-align:center;background:rgba(255,255,255,.12);border-radius:14px;padding:20px 24px;}
+.del-num{font-size:36px;font-weight:800;color:#fff;}
+.del-label{font-size:12px;color:rgba(255,255,255,.7);margin-top:2px;}
+
+/* ── DEMO SCREENS SECTION ── */
+.demo-section{background:var(--dark2);border-radius:28px;padding:72px 64px;margin-bottom:100px;}
+.demo-tabs{display:flex;gap:8px;margin-bottom:48px;flex-wrap:wrap;}
+.demo-tab{padding:9px 20px;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;border:1.5px solid rgba(255,255,255,.1);color:rgba(255,255,255,.5);background:none;transition:all .2s;font-family:var(--head);}
+.demo-tab.on{background:var(--p);border-color:var(--p);color:#fff;}
+.demo-screens{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;}
+.demo-phone{background:#1e1e2e;border-radius:28px;padding:8px;box-shadow:0 16px 40px rgba(0,0,0,.4);}
+.demo-screen{border-radius:22px;overflow:hidden;background:#f1f5f9;}
+.demo-label{text-align:center;margin-top:14px;font-size:12px;font-weight:600;color:rgba(255,255,255,.4);}
+
+/* ── TESTIMONIAL ── */
+.testimonial{background:linear-gradient(135deg,#1e3a5f 0%,#1e1b4b 100%);border-radius:28px;padding:72px 64px;text-align:center;margin-bottom:100px;}
+.t-stars{font-size:24px;margin-bottom:20px;letter-spacing:4px;}
+.t-quote{font-family:var(--body);font-size:clamp(20px,2.5vw,30px);color:#fff;font-style:italic;line-height:1.5;max-width:800px;margin:0 auto 28px;}
+.t-author strong{color:#60a5fa;display:block;font-size:16px;font-family:var(--head);font-style:normal;}
+.t-author span{color:rgba(255,255,255,.45);font-size:13px;font-style:normal;}
+
+/* ── PRICING ── */
+.pricing-grid{display:grid;grid-template-columns:1fr 1fr;gap:24px;max-width:820px;margin:0 auto;}
+.price-card{background:var(--card);border-radius:22px;padding:44px 40px;border:1px solid var(--border);}
+.price-card.hot{background:linear-gradient(135deg,#1d4ed8,#2563eb);border:none;position:relative;overflow:hidden;}
+.price-card.hot::before{content:'POPULAR';position:absolute;top:20px;right:-30px;background:var(--acc);color:#fff;font-size:10px;font-weight:800;letter-spacing:1px;padding:5px 40px;transform:rotate(45deg);}
+.price-tier{font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--muted);margin-bottom:8px;}
+.price-card.hot .price-tier{color:rgba(255,255,255,.6);}
+.price-name{font-size:24px;font-weight:800;letter-spacing:-.5px;margin-bottom:4px;}
+.price-card.hot .price-name{color:#fff;}
+.price-amt{font-size:52px;font-weight:800;letter-spacing:-2px;color:var(--p);line-height:1;margin:16px 0 4px;}
+.price-card.hot .price-amt{color:#fff;}
+.price-mo{font-size:13px;color:var(--muted);margin-bottom:28px;}
+.price-card.hot .price-mo{color:rgba(255,255,255,.55);}
+.price-list{list-style:none;margin-bottom:36px;}
+.price-list li{padding:9px 0;border-bottom:1px solid var(--border);font-size:14px;font-family:var(--body);display:flex;align-items:center;gap:10px;}
+.price-card.hot .price-list li{border-color:rgba(255,255,255,.12);color:rgba(255,255,255,.85);}
+.price-list li::before{content:'✓';width:18px;height:18px;border-radius:50%;background:var(--pp);color:var(--p);font-size:10px;font-weight:800;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;}
+.price-card.hot .price-list li::before{background:rgba(255,255,255,.15);color:#fff;}
+.price-btn{width:100%;padding:15px;border-radius:10px;font-family:var(--head);font-weight:700;font-size:14px;cursor:pointer;border:none;transition:all .2s;}
+.price-btn-p{background:var(--p);color:#fff;}
+.price-btn-p:hover{background:var(--pd);}
+.price-btn-w{background:#fff;color:var(--p);}
+.price-btn-w:hover{background:#f0f4ff;}
+
+/* ── CONTACT ── */
+.contact-grid{display:grid;grid-template-columns:1fr 1fr;gap:80px;align-items:start;}
+.c-phone-block{display:flex;align-items:center;gap:16px;margin-bottom:28px;}
+.c-phone-ico{width:54px;height:54px;background:var(--p);border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0;}
+.c-phone-num{font-size:26px;font-weight:800;letter-spacing:-.5px;}
+.c-phone-lbl{font-size:12px;color:var(--muted);font-weight:500;}
+.c-perks{margin-top:36px;}
+.c-perk{display:flex;align-items:center;gap:12px;margin-bottom:14px;font-size:14px;font-family:var(--body);color:var(--muted);}
+.c-perk-check{width:22px;height:22px;background:var(--p);color:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:800;flex-shrink:0;}
+.c-form{background:var(--card);border-radius:22px;padding:40px;border:1px solid var(--border);}
+.c-form-h{font-size:22px;font-weight:800;letter-spacing:-.5px;margin-bottom:24px;}
+.f-group{margin-bottom:14px;}
+.f-lbl{font-size:11px;font-weight:700;color:var(--muted);letter-spacing:.5px;text-transform:uppercase;margin-bottom:5px;display:block;}
+.f-inp{width:100%;border:1.5px solid var(--border);border-radius:9px;padding:12px 14px;font-size:14px;font-family:var(--head);background:var(--bg);color:var(--text);transition:border-color .2s;}
+.f-inp:focus{outline:none;border-color:var(--p);}
+textarea.f-inp{height:90px;resize:vertical;}
+.f-submit{width:100%;padding:15px;background:var(--p);color:#fff;border:none;border-radius:10px;font-family:var(--head);font-weight:700;font-size:15px;cursor:pointer;transition:all .2s;}
+.f-submit:hover{background:var(--pd);transform:translateY(-1px);}
+.f-success{display:none;text-align:center;padding:40px 20px;}
+.f-success.on{display:block;}
+
+/* ── FOOTER ── */
+footer{background:var(--dark);text-align:center;padding:48px 40px;}
+.f-logo{font-size:24px;font-weight:800;color:#fff;margin-bottom:6px;display:flex;align-items:center;gap:8px;justify-content:center;}
+.f-logo-ico{width:32px;height:32px;background:var(--p);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:14px;}
+.f-tagline{color:rgba(255,255,255,.35);font-size:13px;font-family:var(--body);margin-bottom:24px;}
+.f-copy{color:rgba(255,255,255,.2);font-size:12px;}
+
+/* ── CONTACT TOGGLE ── */
+.contact-toggle{padding:12px 24px;border-radius:10px;font-family:var(--head);font-size:14px;font-weight:700;cursor:pointer;border:2px solid var(--border);background:var(--card);color:var(--muted);transition:all .2s;}
+.contact-toggle.on{background:var(--p);border-color:var(--p);color:#fff;}
+.contact-toggle:hover:not(.on){border-color:var(--p);color:var(--p);}
+@keyframes spin{to{transform:rotate(360deg);}}
+
+/* ── REVEAL ── */
+.reveal{opacity:0;transform:translateY(24px);transition:opacity .65s ease,transform .65s ease;}
+.reveal.on{opacity:1;transform:none;}
+@media(max-width:960px){
+  .hero-inner{grid-template-columns:1fr;gap:48px;padding:60px 24px;}
+  .screens-wrap{justify-content:center;}
+  .phone-frame.side{display:none;}
+  .feat-grid{grid-template-columns:1fr 1fr;}
+  .how-steps{grid-template-columns:1fr 1fr;}
+  .how-wrap{padding:48px 32px;}
+  .delivery-strip{flex-direction:column;padding:36px 32px;margin:0 0 60px;}
+  .del-right{flex-wrap:wrap;justify-content:center;}
+  .demo-screens{grid-template-columns:1fr 1fr;}
+  .pricing-grid{grid-template-columns:1fr;}
+  .contact-grid{grid-template-columns:1fr;}
+  .budget-banner{grid-template-columns:1fr;padding:40px 36px;}
+  .bb-right{flex-direction:row;flex-wrap:wrap;}
+  .section{padding:60px 24px;}
+  .demo-section,.testimonial{border-radius:20px;padding:48px 28px;margin-bottom:60px;}
+  .nav-links{display:none;}
+}
+@media(max-width:600px){
+  .feat-grid{grid-template-columns:1fr;}
+  .how-steps{grid-template-columns:1fr;}
+  .demo-screens{grid-template-columns:1fr;}
+  .nav{padding:0 20px;}
+  .delivery-strip{border-radius:16px;}
+  .demo-section,.testimonial,.budget-banner{border-radius:16px;}
+  .phone-frame.main{width:200px;}
+  .float-tag{display:none;}
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="nav">
+  <div class="nav-logo"><div class="nav-logo-icon">⚡</div>TableFlow</div>
+  <div class="nav-links">
+    <a class="nav-link" href="#features" data-en="Features" data-nl="Functies">Features</a>
+    <a class="nav-link" href="#how" data-en="How it works" data-nl="Hoe het werkt">How it works</a>
+    <a class="nav-link" href="#demo" data-en="Demo" data-nl="Demo">Demo</a>
+    <a class="nav-link" href="#contact" data-en="Contact" data-nl="Contact">Contact</a>
+  </div>
+  <button class="lang-btn active" onclick="setLang('en')">EN</button>
+  <button class="lang-btn" onclick="setLang('nl')">NL</button>
+  <a class="nav-cta" href="#contact" data-en="Free demo" data-nl="Gratis demo">Free demo</a>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-mesh"></div>
+  <div class="hero-grid"></div>
+  <div class="hero-inner">
+    <div>
+      <div class="hero-badge"><span class="badge-dot"></span><span data-en="Now live in restaurants" data-nl="Nu live in restaurants">Now live in restaurants</span></div>
+      <h1 class="hero-h1" data-en="The POS system your restaurant <em>actually</em> needs" data-nl="Het kassasysteem dat uw restaurant <em>écht</em> nodig heeft">The POS system your restaurant <em>actually</em> needs</h1>
+      <p class="hero-sub" data-en="TableFlow gives small and independent restaurants a professional digital ordering system — without the enterprise price tag." data-nl="TableFlow geeft kleine en zelfstandige restaurants een professioneel digitaal bestelsysteem — zonder de grote prijskaartjes.">TableFlow gives small and independent restaurants a professional digital ordering system — without the enterprise price tag.</p>
+      <div class="hero-budget">
+        <div class="hero-budget-icon">💡</div>
+        <div class="hero-budget-text" data-en="Built for restaurants that need smart solutions on a realistic budget" data-nl="Gebouwd voor restaurants die slimme oplossingen nodig hebben met een realistisch budget">Built for restaurants that need smart solutions on a realistic budget</div>
+      </div>
+      <div class="hero-actions">
+        <a href="#contact" class="btn-acc" data-en="🚀 Get started in 7 days" data-nl="🚀 Start binnen 7 dagen">🚀 Get started in 7 days</a>
+        <a href="#demo" class="btn-ghost" data-en="See the demo" data-nl="Bekijk de demo">See the demo</a>
+      </div>
+      <div class="hero-trust">
+        <div class="trust-item"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="20 6 9 17 4 12"/></svg><span data-en="No technical knowledge needed" data-nl="Geen technische kennis nodig">No technical knowledge needed</span></div>
+        <div class="trust-item"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="20 6 9 17 4 12"/></svg><span data-en="Works on phones & tablets" data-nl="Werkt op telefoon & tablet">Works on phones & tablets</span></div>
+        <div class="trust-item"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="20 6 9 17 4 12"/></svg><span data-en="Up and running in 7 days" data-nl="Operationeel binnen 7 dagen">Up and running in 7 days</span></div>
+      </div>
+    </div>
+    <div>
+      <div class="screens-wrap" style="position:relative;">
+        <!-- Main phone - Orders screen -->
+        <div class="phone-frame side">
+          <div class="phone-screen">
+            <div class="scr-hdr" style="background:#1d4ed8;">
+              <div class="scr-logo" style="background:rgba(255,255,255,.2);">⚡</div>
+              <span class="scr-brand">TableFlow</span>
+            </div>
+            <div class="scr-body">
+              <div class="scr-title" data-en="Kitchen" data-nl="Keuken">Kitchen</div>
+              <div class="scr-sub">3 active orders</div>
+              <div class="k-card">
+                <div class="k-card-top">
+                  <div><div class="k-card-name" data-en="Table 2" data-nl="Tafel 2">Table 2</div><div class="k-card-time">3m ago</div></div>
+                  <div class="scr-badge sb-red">🔴 New</div>
+                </div>
+                <div class="k-card-body">
+                  <div class="k-item"><span class="k-qty">2×</span> Grilled Chicken</div>
+                  <div class="k-item"><span class="k-qty">1×</span> Pasta Bolognese</div>
+                  <div class="k-item"><span class="k-qty">3×</span> Sparkling Water</div>
+                </div>
+                <div class="k-card-foot"><button class="k-btn k-btn-orange" data-en="Start Cooking →" data-nl="Begin met koken →">Start Cooking →</button></div>
+              </div>
+              <div class="k-card">
+                <div class="k-card-top">
+                  <div><div class="k-card-name" data-en="Takeaway — Maria" data-nl="Afhalen — Maria">Takeaway — Maria</div><div class="k-card-time">8m ago</div></div>
+                  <div class="scr-badge sb-orange">🟡 Busy</div>
+                </div>
+                <div class="k-card-body">
+                  <div class="k-item"><span class="k-qty">1×</span> Fish & Chips</div>
+                  <div class="k-item"><span class="k-qty">2×</span> Cola</div>
+                </div>
+                <div class="k-card-foot"><button class="k-btn k-btn-green" data-en="Mark Ready ✓" data-nl="Markeer Klaar ✓">Mark Ready ✓</button></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- Side phone - new order -->
+        <div class="phone-frame main" style="position:relative;">
+          <div class="phone-notch"></div>
+          <div class="phone-screen">
+            <div class="scr-hdr" style="background:#1d4ed8;">
+              <div class="scr-logo" style="background:rgba(255,255,255,.2);">⚡</div>
+              <span class="scr-brand">TableFlow</span>
+            </div>
+            <div class="scr-body">
+              <div class="scr-title" data-en="Orders" data-nl="Bestellingen">Orders</div>
+              <div class="scr-sub" data-en="Tap to view details" data-nl="Tik voor details">Tap to view details</div>
+              <div class="scr-card">
+                <div class="scr-card-head"><span data-en="Table 5" data-nl="Tafel 5">Table 5</span><div class="scr-badge sb-green">🟢 Ready</div></div>
+                <div class="scr-row"><span class="scr-row-name">2× Steak</span><span class="scr-row-price">€38</span></div>
+                <div class="scr-row"><span class="scr-row-name">1× Caesar Salad</span><span class="scr-row-price">€12</span></div>
+                <div class="scr-row"><span class="scr-row-name">2× Red Wine</span><span class="scr-row-price">€16</span></div>
+                <div class="scr-total"><span data-en="Total" data-nl="Totaal">Total</span><span>€66.00</span></div>
+              </div>
+              <div class="scr-card">
+                <div class="scr-card-head"><span data-en="Table 3" data-nl="Tafel 3">Table 3</span><div class="scr-badge sb-orange">🟡 Busy</div></div>
+                <div class="scr-row"><span class="scr-row-name">3× Pizza</span><span class="scr-row-price">€36</span></div>
+                <div class="scr-row"><span class="scr-row-name">3× Beer</span><span class="scr-row-price">€12</span></div>
+                <div class="scr-total"><span data-en="Total" data-nl="Totaal">Total</span><span>€48.00</span></div>
+              </div>
+              <div class="scr-card" style="padding:10px 12px;">
+                <div style="font-size:10px;font-weight:700;color:#64748b;margin-bottom:8px;" data-en="TODAY'S REVENUE" data-nl="OMZET VANDAAG">TODAY'S REVENUE</div>
+                <div class="rep-stat">
+                  <div class="rep-box"><div class="rep-label" data-en="Revenue" data-nl="Omzet">Revenue</div><div class="rep-val">€847</div></div>
+                  <div class="rep-box"><div class="rep-label" data-en="Orders" data-nl="Orders">Orders</div><div class="rep-val" style="color:#f97316;">24</div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="float-tag ft1">
+            <div class="ft-ico ft-blue">💳</div>
+            <div><div class="ft-t" data-en="Payment received" data-nl="Betaling ontvangen">Payment received</div><div class="ft-v">€66.00</div></div>
+          </div>
+          <div class="float-tag ft2">
+            <div class="ft-ico ft-orange">🔔</div>
+            <div><div class="ft-t" data-en="Table 5 is ready!" data-nl="Tafel 5 is klaar!">Table 5 is ready!</div><div class="ft-v" style="color:#f97316;" data-en="Now" data-nl="Nu">Now</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- BUDGET BANNER -->
+<div style="max-width:1200px;margin:80px auto 0;padding:0 40px;">
+  <div class="budget-banner reveal">
+    <div>
+      <div class="bb-tag" data-en="Affordable by design" data-nl="Betaalbaar by design">Affordable by design</div>
+      <div class="bb-h" data-en="Not just for restaurants<br/>with big budgets" data-nl="Niet alleen voor restaurants<br/>met grote budgetten">Not just for restaurants<br/>with big budgets</div>
+      <p class="bb-sub" data-en="Most POS systems cost thousands to set up and require expensive hardware. TableFlow works on the phones and tablets you already own — fully configured with your logo, colors and menu. A setup that makes sense for independent restaurants." data-nl="De meeste kassasystemen kosten duizenden euro's om op te zetten en vereisen dure hardware. TableFlow werkt op de telefoons en tablets die u al heeft — volledig geconfigureerd met uw logo, kleuren en menu. Een installatie die past bij zelfstandige restaurants.">Most POS systems cost thousands to set up and require expensive hardware. TableFlow works on the phones and tablets you already own — fully configured with your logo, colors and menu. A setup that makes sense for independent restaurants.</p>
+    </div>
+    <div class="bb-right">
+      <div class="bb-stat">
+        <div class="bb-num">€0</div>
+        <div class="bb-label" data-en="Hardware needed" data-nl="Hardware nodig">Hardware needed</div>
+      </div>
+      <div class="bb-stat">
+        <div class="bb-num">7</div>
+        <div class="bb-label" data-en="Days to go live" data-nl="Dagen om live te gaan">Days to go live</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- FEATURES -->
+<section class="section" id="features">
+  <div class="reveal">
+    <div class="s-tag" data-en="Features" data-nl="Functies">Features</div>
+    <h2 class="s-h2" data-en="Everything in one place" data-nl="Alles op één plek">Everything in one place</h2>
+    <p class="s-sub" data-en="From the moment a customer sits down to the moment they pay — TableFlow handles it all." data-nl="Van het moment dat een klant gaat zitten tot het moment dat ze betalen — TableFlow regelt het allemaal.">From the moment a customer sits down to the moment they pay — TableFlow handles it all.</p>
+  </div>
+  <div class="feat-grid">
+    <div class="feat reveal"><div class="feat-ico">📱</div><div class="feat-h" data-en="Any device, instantly" data-nl="Elk apparaat, direct">Any device, instantly</div><p class="feat-p" data-en="No app to download. Open the link on any phone, tablet or laptop. Your staff can start taking orders in minutes." data-nl="Geen app te downloaden. Open de link op elke telefoon, tablet of laptop. Uw personeel kan in minuten bestellingen opnemen.">No app to download. Open the link on any phone, tablet or laptop. Your staff can start taking orders in minutes.</p></div>
+    <div class="feat reveal"><div class="feat-ico">🍳</div><div class="feat-h" data-en="Live kitchen screen" data-nl="Live keukenbeeldscherm">Live kitchen screen</div><p class="feat-p" data-en="Orders go to the kitchen instantly. Staff mark them Not Started → Busy → Ready. No more shouting across the kitchen." data-nl="Bestellingen gaan direct naar de keuken. Personeel markeert ze Niet gestart → Bezig → Klaar. Niet meer schreeuwen door de keuken.">Orders go to the kitchen instantly. Staff mark them Not Started → Busy → Ready. No more shouting across the kitchen.</p></div>
+    <div class="feat reveal"><div class="feat-ico">🔔</div><div class="feat-h" data-en="Instant notifications" data-nl="Directe meldingen">Instant notifications</div><p class="feat-p" data-en="When the kitchen marks food as ready, a notification pops up on the floor staff's device. Table service becomes effortless." data-nl="Wanneer de keuken eten als klaar markeert, verschijnt er een melding op het apparaat van het bedienend personeel. Tafelservice wordt moeiteloos.">When the kitchen marks food as ready, a notification pops up on the floor staff's device. Table service becomes effortless.</p></div>
+    <div class="feat reveal"><div class="feat-ico">💳</div><div class="feat-h" data-en="Fast cash & card payment" data-nl="Snelle contante & pinbetaling">Fast cash & card payment</div><p class="feat-p" data-en="One tap for cash or card. The full order summary appears before confirming. All payments logged automatically." data-nl="Één tik voor contant of pin. Het volledige besteloverzicht verschijnt voor bevestiging. Alle betalingen automatisch geregistreerd.">One tap for cash or card. The full order summary appears before confirming. All payments logged automatically.</p></div>
+    <div class="feat reveal"><div class="feat-ico">📊</div><div class="feat-h" data-en="Owner dashboard" data-nl="Eigenaarsdashboard">Owner dashboard</div><p class="feat-p" data-en="Revenue by day, week, month or year. Top selling dishes, dine-in vs takeaway, cash vs card — all in one PIN-protected screen." data-nl="Omzet per dag, week, maand of jaar. Best verkopende gerechten, terras vs afhaal, contant vs pin — alles in één PIN-beveiligd scherm.">Revenue by day, week, month or year. Top selling dishes, dine-in vs takeaway, cash vs card — all in one PIN-protected screen.</p></div>
+    <div class="feat reveal"><div class="feat-ico">🎨</div><div class="feat-h" data-en="Branded to your restaurant" data-nl="Jouw restaurantstijl">Branded to your restaurant</div><p class="feat-p" data-en="TableFlow is configured with your restaurant's logo and colors. Your staff sees your brand every time they open the system — not a generic app." data-nl="TableFlow wordt geconfigureerd met het logo en de kleuren van uw restaurant. Uw personeel ziet uw merk elke keer dat ze het systeem openen — geen generieke app.">TableFlow is configured with your restaurant's logo and colors. Your staff sees your brand every time they open the system — not a generic app.</p></div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section style="padding:0 40px 100px;" id="how">
+  <div class="how-wrap reveal">
+    <div class="s-tag" style="color:#60a5fa" data-en="How it works" data-nl="Hoe het werkt">How it works</div>
+    <h2 class="s-h2" style="color:#fff" data-en="Order to payment in 4 steps" data-nl="Van bestelling tot betaling in 4 stappen">Order to payment in 4 steps</h2>
+    <div class="how-steps">
+      <div class="how-step">
+        <div class="how-num-wrap"><div class="how-num">1</div></div>
+        <div class="how-ico">🪑</div>
+        <div class="how-h" data-en="Staff takes the order" data-nl="Personeel neemt de bestelling op">Staff takes the order</div>
+        <p class="how-p" data-en="Select table number or takeaway name. Tap items from the digital menu. Add notes. Done in under 30 seconds." data-nl="Selecteer tafelnummer of afhaalnaam. Tik items uit het digitale menu. Voeg notities toe. Klaar in minder dan 30 seconden.">Select table number or takeaway name. Tap items from the digital menu. Add notes. Done in under 30 seconds.</p>
+      </div>
+      <div class="how-step">
+        <div class="how-num-wrap"><div class="how-num">2</div></div>
+        <div class="how-ico">🍳</div>
+        <div class="how-h" data-en="Kitchen gets notified" data-nl="Keuken wordt geïnformeerd">Kitchen gets notified</div>
+        <p class="how-p" data-en="The order appears instantly on the kitchen screen. The chef moves it from New → Busy → Ready as they cook." data-nl="De bestelling verschijnt direct op het keukenbeeldscherm. De kok verplaatst het van Nieuw → Bezig → Klaar tijdens het koken.">The order appears instantly on the kitchen screen. The chef moves it from New → Busy → Ready as they cook.</p>
+      </div>
+      <div class="how-step">
+        <div class="how-num-wrap"><div class="how-num">3</div></div>
+        <div class="how-ico">🔔</div>
+        <div class="how-h" data-en="Staff is alerted" data-nl="Personeel wordt gewaarschuwd">Staff is alerted</div>
+        <p class="how-p" data-en="A push notification fires on the server's device the moment the food is ready. No walkie-talkies, no shouting." data-nl="Een pushmelding verschijnt op het apparaat van de bediende zodra het eten klaar is. Geen portofoons, geen schreeuwen.">A push notification fires on the server's device the moment the food is ready. No walkie-talkies, no shouting.</p>
+      </div>
+      <div class="how-step">
+        <div class="how-num-wrap"><div class="how-num">4</div></div>
+        <div class="how-ico">💰</div>
+        <div class="how-h" data-en="Payment collected" data-nl="Betaling geïnd">Payment collected</div>
+        <p class="how-p" data-en="Tap cash or card. Confirm. Done. Revenue is recorded automatically. Owner sees it in the report dashboard." data-nl="Tik contant of pin. Bevestigen. Klaar. Omzet wordt automatisch geregistreerd. Eigenaar ziet het in het rapportdashboard.">Tap cash or card. Confirm. Done. Revenue is recorded automatically. Owner sees it in the report dashboard.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- DELIVERY STRIP -->
+<div style="max-width:1200px;margin:0 auto;padding:0 40px 100px;">
+  <div class="delivery-strip reveal">
+    <div class="del-left">
+      <div class="del-badge">⚡ <span data-en="Fast delivery" data-nl="Snelle levering">Fast delivery</span></div>
+      <div class="del-h" data-en="Your system goes live<br/>within 7 days" data-nl="Uw systeem is live<br/>binnen 7 dagen">Your system goes live<br/>within 7 days</div>
+      <p class="del-sub" data-en="We set everything up for you — menu, staff accounts, training. You don't need to touch a line of code. We handle it all, and your restaurant is up and running within one week." data-nl="Wij regelen alles voor u — menu, personeelsaccounts, training. U hoeft geen enkele regel code aan te raken. Wij regelen het allemaal en uw restaurant is binnen één week operationeel.">We set everything up for you — menu, staff accounts, training. You don't need to touch a line of code. We handle it all, and your restaurant is up and running within one week.</p>
+    </div>
+    <div class="del-right">
+      <div class="del-item">
+        <div class="del-num">Day 1</div>
+        <div class="del-label" data-en="We call you" data-nl="We bellen u">We call you</div>
+      </div>
+      <div class="del-item">
+        <div class="del-num">Day 3</div>
+        <div class="del-label" data-en="Menu & branding set" data-nl="Menu & huisstijl klaar">Menu & branding set</div>
+      </div>
+      <div class="del-item">
+        <div class="del-num">Day 7</div>
+        <div class="del-label" data-en="You go live 🚀" data-nl="U gaat live 🚀">You go live 🚀</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- DEMO SCREENS -->
+<section style="padding:0 40px 100px;" id="demo">
+  <div class="demo-section reveal">
+    <div class="s-tag" style="color:#60a5fa" data-en="See it in action" data-nl="Zie het in actie">See it in action</div>
+    <h2 class="s-h2" style="color:#fff" data-en="Three screens your team will use every day" data-nl="Drie schermen die uw team elke dag zal gebruiken">Three screens your team will use every day</h2>
+    <div class="demo-screens" style="margin-top:40px;">
+
+      <!-- Screen 1: New Order -->
+      <div>
+        <div class="demo-phone">
+          <div class="demo-screen">
+            <div class="scr-hdr" style="background:#1d4ed8;"><div class="scr-logo" style="background:rgba(255,255,255,.2);">⚡</div><span class="scr-brand">TableFlow</span></div>
+            <div class="scr-body">
+              <div class="scr-title" data-en="New Order" data-nl="Nieuwe Bestelling">New Order</div>
+              <div class="scr-sub" data-en="Choose order type" data-nl="Kies besteltype">Choose order type</div>
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px;">
+                <div style="background:#2563eb;color:#fff;border-radius:10px;padding:16px;text-align:center;font-size:11px;font-weight:700;">🍽️<br/><span data-en="Dine In" data-nl="Dine In">Dine In</span></div>
+                <div style="background:#f1f5f9;border-radius:10px;padding:16px;text-align:center;font-size:11px;font-weight:700;color:#64748b;">📦<br/><span data-en="Takeaway" data-nl="Afhalen">Takeaway</span></div>
+              </div>
+              <div style="font-size:9px;font-weight:700;color:#64748b;margin-bottom:4px;letter-spacing:.5px;text-transform:uppercase;" data-en="Table number" data-nl="Tafelnummer">Table number</div>
+              <div style="background:#f1f5f9;border-radius:8px;padding:9px 12px;font-size:12px;color:#334155;margin-bottom:10px;">5</div>
+              <div style="font-size:9px;font-weight:700;color:#64748b;margin-bottom:6px;letter-spacing:.5px;text-transform:uppercase;" data-en="MENU" data-nl="MENU">MENU</div>
+              <div style="display:flex;gap:6px;margin-bottom:8px;flex-wrap:wrap;">
+                <span style="background:#2563eb;color:#fff;border-radius:12px;padding:4px 10px;font-size:9px;font-weight:700;" data-en="Starters" data-nl="Voorgerecht">Starters</span>
+                <span style="background:#f1f5f9;color:#64748b;border-radius:12px;padding:4px 10px;font-size:9px;font-weight:600;" data-en="Mains" data-nl="Hoofdgerecht">Mains</span>
+                <span style="background:#f1f5f9;color:#64748b;border-radius:12px;padding:4px 10px;font-size:9px;font-weight:600;" data-en="Drinks" data-nl="Dranken">Drinks</span>
+              </div>
+              <div class="scr-card" style="margin-bottom:6px;padding:10px 12px;">
+                <div style="display:flex;justify-content:space-between;align-items:center;">
+                  <div><div style="font-size:11px;font-weight:600;">Chicken Soup</div><div style="font-size:10px;color:#2563eb;font-weight:700;">€8.50</div></div>
+                  <div style="display:flex;align-items:center;gap:8px;"><div style="width:26px;height:26px;border-radius:50%;background:#fef2f2;color:#dc2626;font-size:16px;font-weight:700;display:flex;align-items:center;justify-content:center;">−</div><span style="font-size:13px;font-weight:700;">2</span><div style="width:26px;height:26px;border-radius:50%;background:#eff6ff;color:#2563eb;font-size:16px;font-weight:700;display:flex;align-items:center;justify-content:center;">+</div></div>
+                </div>
+              </div>
+              <div style="background:#2563eb;color:#fff;border-radius:10px;padding:12px;display:flex;justify-content:space-between;align-items:center;font-size:11px;font-weight:700;margin-top:8px;">
+                <span>2 items · <span data-en="Send to Kitchen" data-nl="Stuur naar Keuken">Send to Kitchen</span></span><span>€17.00</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="demo-label" data-en="📋 Taking an order" data-nl="📋 Bestelling opnemen">📋 Taking an order</div>
+      </div>
+
+      <!-- Screen 2: Kitchen -->
+      <div>
+        <div class="demo-phone">
+          <div class="demo-screen">
+            <div class="scr-hdr" style="background:#1d4ed8;"><div class="scr-logo" style="background:rgba(255,255,255,.2);">⚡</div><span class="scr-brand">TableFlow</span></div>
+            <div class="scr-body">
+              <div class="scr-title" data-en="Kitchen" data-nl="Keuken">Kitchen</div>
+              <div class="scr-sub">3 <span data-en="active orders" data-nl="actieve bestellingen">active orders</span></div>
+              <div class="k-card" style="border-left:4px solid #dc2626;">
+                <div class="k-card-top">
+                  <div><div class="k-card-name" data-en="Table 1" data-nl="Tafel 1">Table 1</div><div class="k-card-time">1m ago</div></div>
+                  <div class="scr-badge sb-red">🔴 <span data-en="New" data-nl="Nieuw">New</span></div>
+                </div>
+                <div class="k-card-body">
+                  <div class="k-item"><span class="k-qty">1×</span> <span data-en="Beef Burger" data-nl="Hamburger">Beef Burger</span></div>
+                  <div class="k-item"><span class="k-qty">2×</span> <span data-en="Fish & Chips" data-nl="Vis & Friet">Fish & Chips</span></div>
+                  <div class="k-item" style="color:#64748b;font-size:9px;"><span data-en="Note: no onions" data-nl="Notitie: geen uien">Note: no onions</span></div>
+                </div>
+                <div class="k-card-foot"><button class="k-btn k-btn-orange" data-en="Start Cooking →" data-nl="Begin met koken →">Start Cooking →</button></div>
+              </div>
+              <div class="k-card" style="border-left:4px solid #f97316;">
+                <div class="k-card-top">
+                  <div><div class="k-card-name" data-en="Table 4" data-nl="Tafel 4">Table 4</div><div class="k-card-time">6m ago</div></div>
+                  <div class="scr-badge sb-orange">🟡 <span data-en="Busy" data-nl="Bezig">Busy</span></div>
+                </div>
+                <div class="k-card-body">
+                  <div class="k-item"><span class="k-qty">3×</span> <span data-en="Margherita Pizza" data-nl="Margherita Pizza">Margherita Pizza</span></div>
+                  <div class="k-item"><span class="k-qty">1×</span> <span data-en="Tiramisu" data-nl="Tiramisu">Tiramisu</span></div>
+                </div>
+                <div class="k-card-foot"><button class="k-btn k-btn-green" data-en="Mark Ready ✓" data-nl="Markeer Klaar ✓">Mark Ready ✓</button></div>
+              </div>
+              <div class="k-card" style="border-left:4px solid #16a34a;opacity:.7;">
+                <div class="k-card-top">
+                  <div><div class="k-card-name" data-en="Takeaway — Lucas" data-nl="Afhalen — Lucas">Takeaway — Lucas</div><div class="k-card-time">11m ago</div></div>
+                  <div class="scr-badge sb-green">🟢 <span data-en="Ready" data-nl="Klaar">Ready</span></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="demo-label" data-en="🍳 Kitchen view" data-nl="🍳 Keukenweergave">🍳 Kitchen view</div>
+      </div>
+
+      <!-- Screen 3: Reports -->
+      <div>
+        <div class="demo-phone">
+          <div class="demo-screen">
+            <div class="scr-hdr" style="background:#1d4ed8;"><div class="scr-logo" style="background:rgba(255,255,255,.2);">⚡</div><span class="scr-brand">TableFlow</span></div>
+            <div class="scr-body">
+              <div class="scr-title" data-en="Reports" data-nl="Rapporten">Reports</div>
+              <div style="display:flex;gap:5px;margin-bottom:12px;">
+                <span style="background:#2563eb;color:#fff;border-radius:10px;padding:4px 10px;font-size:9px;font-weight:700;" data-en="Today" data-nl="Vandaag">Today</span>
+                <span style="background:#f1f5f9;color:#64748b;border-radius:10px;padding:4px 10px;font-size:9px;font-weight:600;" data-en="Week" data-nl="Week">Week</span>
+                <span style="background:#f1f5f9;color:#64748b;border-radius:10px;padding:4px 10px;font-size:9px;font-weight:600;" data-en="Month" data-nl="Maand">Month</span>
+              </div>
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:8px;">
+                <div class="rep-box"><div class="rep-label" data-en="Revenue" data-nl="Omzet">Revenue</div><div class="rep-val">€1,248</div></div>
+                <div class="rep-box"><div class="rep-label" data-en="Orders" data-nl="Orders">Orders</div><div class="rep-val" style="color:#f97316;">34</div></div>
+                <div class="rep-box"><div class="rep-label" data-en="Dine In" data-nl="Dine In">Dine In</div><div class="rep-val" style="color:#7c3aed;font-size:14px;">21</div></div>
+                <div class="rep-box"><div class="rep-label" data-en="Takeaway" data-nl="Afhalen">Takeaway</div><div class="rep-val" style="color:#7c3aed;font-size:14px;">13</div></div>
+              </div>
+              <div class="scr-card" style="padding:10px 12px;margin-bottom:6px;">
+                <div style="font-size:9px;font-weight:700;color:#64748b;letter-spacing:.5px;margin-bottom:8px;text-transform:uppercase;" data-en="TOP DISHES TODAY" data-nl="TOP GERECHTEN VANDAAG">TOP DISHES TODAY</div>
+                <div class="scr-row"><span class="scr-row-name">🥇 <span data-en="Beef Burger" data-nl="Hamburger">Beef Burger</span></span><span style="color:#64748b;font-weight:700;">12×</span></div>
+                <div class="scr-row"><span class="scr-row-name">🥈 <span data-en="Margherita Pizza" data-nl="Margherita Pizza">Margherita Pizza</span></span><span style="color:#64748b;font-weight:700;">9×</span></div>
+                <div class="scr-row"><span class="scr-row-name">🥉 <span data-en="Fish & Chips" data-nl="Vis & Friet">Fish & Chips</span></span><span style="color:#64748b;font-weight:700;">7×</span></div>
+              </div>
+              <div class="scr-card" style="padding:10px 12px;">
+                <div style="display:flex;justify-content:space-between;font-size:10px;">
+                  <span style="color:#64748b;" data-en="💵 Cash" data-nl="💵 Contant">💵 Cash</span><span style="font-weight:700;">€712</span>
+                </div>
+                <div style="display:flex;justify-content:space-between;font-size:10px;margin-top:6px;">
+                  <span style="color:#64748b;" data-en="💳 Card" data-nl="💳 Pin">💳 Card</span><span style="font-weight:700;">€536</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="demo-label" data-en="📊 Owner reports" data-nl="📊 Eigenaarrapporten">📊 Owner reports</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TESTIMONIAL -->
+<div style="max-width:1200px;margin:0 auto;padding:0 40px 100px;">
+  <div class="testimonial reveal">
+    <div class="t-stars">⭐⭐⭐⭐⭐</div>
+    <p class="t-quote" data-en='"Before TableFlow, our staff were running around with paper tickets and we kept losing track of orders. Now everything flows — the kitchen knows exactly what to cook and when, and we can see our revenue in real time."' data-nl='"Voor TableFlow liep ons personeel rond met papieren bonnetjes en raakten we constant bestellingen kwijt. Nu loopt alles soepel — de keuken weet precies wat er gekookt moet worden en wanneer, en we kunnen onze omzet in realtime zien."'>"Before TableFlow, our staff were running around with paper tickets and we kept losing track of orders. Now everything flows — the kitchen knows exactly what to cook and when, and we can see our revenue in real time."</p>
+    <div class="t-author">
+      <strong data-en="Restaurant owner, Amsterdam" data-nl="Restauranteigenaar, Amsterdam">Restaurant owner, Amsterdam</strong>
+      <span data-en="TableFlow customer since 2025" data-nl="TableFlow klant sinds 2025">TableFlow customer since 2025</span>
+    </div>
+  </div>
+</div>
+
+<!-- CONTACT -->
+<section class="section" id="contact">
+  <div class="reveal">
+    <div class="s-tag" data-en="Get started" data-nl="Aan de slag">Get started</div>
+    <h2 class="s-h2" data-en="Ready in 7 days.<br/>Book your free demo." data-nl="Klaar in 7 dagen.<br/>Boek uw gratis demo.">Ready in 7 days.<br/>Book your free demo.</h2>
+    <p class="s-sub" data-en="Pick a time that suits you and we'll show you TableFlow live — at your restaurant, on your devices. No obligations." data-nl="Kies een tijd die u uitkomt en wij laten u TableFlow live zien — bij uw restaurant, op uw apparaten. Geheel vrijblijvend.">Pick a time that suits you and we'll show you TableFlow live — at your restaurant, on your devices. No obligations.</p>
+  </div>
+
+  <!-- Options toggle -->
+  <div style="display:flex;gap:12px;margin-bottom:40px;" class="reveal">
+    <button class="contact-toggle on" id="tab-cal" onclick="showTab('cal')" data-en="📅 Book a demo call" data-nl="📅 Boek een demogesprek">📅 Book a demo call</button>
+    <button class="contact-toggle" id="tab-form" onclick="showTab('form')" data-en="✉️ Leave your details" data-nl="✉️ Laat uw gegevens achter">✉️ Leave your details</button>
+  </div>
+
+  <!-- Calendly embed -->
+  <div id="pane-cal" class="reveal">
+    <div style="background:var(--card);border-radius:22px;border:1px solid var(--border);overflow:hidden;min-height:700px;">
+      <div class="calendly-inline-widget" data-url="https://calendly.com/ike-iyere-future-stack/30min?hide_gdpr_banner=1&primary_color=2563eb" style="min-width:320px;height:700px;"></div>
+    </div>
+    <div style="display:flex;align-items:center;gap:12px;margin-top:20px;padding:16px 20px;background:var(--pp);border-radius:12px;border:1px solid #bfdbfe;">
+      <span style="font-size:20px;">✅</span>
+      <p style="font-size:13px;color:#1d4ed8;font-weight:500;font-family:var(--body);" data-en="You'll receive an instant confirmation email with all details. We'll call you at the agreed time — ready to show you everything live." data-nl="U ontvangt direct een bevestigingsmail met alle details. We bellen u op het afgesproken tijdstip — klaar om u alles live te laten zien.">You'll receive an instant confirmation email with all details. We'll call you at the agreed time — ready to show you everything live.</p>
+    </div>
+  </div>
+
+  <!-- Fallback form -->
+  <div id="pane-form" style="display:none;" class="reveal">
+    <div class="contact-grid">
+      <div>
+        <div class="c-phone-block">
+          <div class="c-phone-ico">📞</div>
+          <div>
+            <div class="c-phone-lbl" data-en="Or call us directly" data-nl="Of bel ons direct">Or call us directly</div>
+            <div class="c-phone-num">+31 6 48 97 82 85</div>
+          </div>
+        </div>
+        <p style="color:var(--muted);font-family:var(--body);font-size:14px;line-height:1.7;max-width:360px;margin-bottom:36px;" data-en="Available Monday–Saturday, 9:00–18:00. We typically respond the same day." data-nl="Beschikbaar maandag t/m zaterdag, 9:00–18:00. We reageren doorgaans dezelfde dag.">Available Monday–Saturday, 9:00–18:00. We typically respond the same day.</p>
+        <div class="c-perks">
+          <div class="c-perk"><div class="c-perk-check">✓</div><span data-en="Free demo at your location" data-nl="Gratis demo op uw locatie">Free demo at your location</span></div>
+          <div class="c-perk"><div class="c-perk-check">✓</div><span data-en="Full setup & staff training included" data-nl="Volledige installatie & personeelstraining inbegrepen">Full setup & staff training included</span></div>
+          <div class="c-perk"><div class="c-perk-check">✓</div><span data-en="Live within 7 days — guaranteed" data-nl="Live binnen 7 dagen — gegarandeerd">Live within 7 days — guaranteed</span></div>
+          <div class="c-perk"><div class="c-perk-check">✓</div><span data-en="No expensive hardware required" data-nl="Geen dure hardware vereist">No expensive hardware required</span></div>
+          <div class="c-perk"><div class="c-perk-check">✓</div><span data-en="Configured with your logo & brand colors" data-nl="Geconfigureerd met uw logo & huiskleuren">Configured with your logo & brand colors</span></div>
+          <div class="c-perk"><div class="c-perk-check">✓</div><span data-en="No long-term contract" data-nl="Geen langdurig contract">No long-term contract</span></div>
+        </div>
+      </div>
+      <div>
+        <div class="c-form" id="cf">
+          <div class="c-form-h" data-en="We'll call you back" data-nl="Wij bellen u terug">We'll call you back</div>
+          <div class="f-group"><label class="f-lbl" data-en="Your name" data-nl="Uw naam">Your name</label><input class="f-inp" id="fn" type="text" placeholder="John Smith"/></div>
+          <div class="f-group"><label class="f-lbl" data-en="Restaurant name" data-nl="Restaurantnaam">Restaurant name</label><input class="f-inp" id="fr" type="text" placeholder="My Restaurant"/></div>
+          <div class="f-group"><label class="f-lbl" data-en="Phone number" data-nl="Telefoonnummer">Phone number</label><input class="f-inp" id="fp" type="tel" placeholder="+31 6 ..."/></div>
+          <div class="f-group"><label class="f-lbl" data-en="City" data-nl="Stad">City</label><input class="f-inp" id="fc" type="text" placeholder="Amsterdam"/></div>
+          <div class="f-group"><label class="f-lbl" data-en="Message (optional)" data-nl="Bericht (optioneel)">Message (optional)</label><textarea class="f-inp" id="fm" placeholder="..."></textarea></div>
+          <button class="f-submit" onclick="doSubmit()" data-en="Send request →" data-nl="Verzoek versturen →">Send request →</button>
+        </div>
+        <div class="f-success c-form" id="fs">
+          <div style="font-size:56px;margin-bottom:16px;">🎉</div>
+          <div style="font-size:22px;font-weight:800;letter-spacing:-.5px;margin-bottom:8px;" data-en="Request received!" data-nl="Verzoek ontvangen!">Request received!</div>
+          <p style="color:var(--muted);font-family:var(--body);font-size:14px;" data-en="We'll call you within one business day to plan your free demo." data-nl="We bellen u binnen één werkdag om uw gratis demo te plannen.">We'll call you within one business day to plan your free demo.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="f-logo"><div class="f-logo-ico">⚡</div>TableFlow</div>
+  <div class="f-tagline" data-en="Smart POS for independent restaurants" data-nl="Slim kassasysteem voor zelfstandige restaurants">Smart POS for independent restaurants</div>
+  <div style="color:rgba(255,255,255,.25);font-size:12px;margin-bottom:8px;">FutureStack B.V. · Paasheuvelweg 14a · 1105BH Amsterdam</div>
+  <div class="f-copy" data-en="© 2025 FutureStack B.V. All rights reserved." data-nl="© 2025 FutureStack B.V. Alle rechten voorbehouden.">© 2025 FutureStack B.V. All rights reserved.</div>
+</footer>
+
+<script>
+let lang = 'en';
+
+function setLang(l) {
+  lang = l;
+  document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+  document.querySelector(`.lang-btn[onclick="setLang('${l}')"]`).classList.add('active');
+  document.querySelectorAll('[data-en]').forEach(el => {
+    const t = el.getAttribute('data-' + l);
+    if (t) el.innerHTML = t;
+  });
+  document.documentElement.lang = l;
+}
+
+// Scroll reveal
+const obs = new IntersectionObserver(entries => {
+  entries.forEach((e, i) => {
+    if (e.isIntersecting) setTimeout(() => e.target.classList.add('on'), i * 60);
+  });
+}, { threshold: 0.08 });
+document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
+
+// Form
+function doSubmit() {
+  const n = document.getElementById('fn').value.trim();
+  const r = document.getElementById('fr').value.trim();
+  const p = document.getElementById('fp').value.trim();
+  if (!n || !r || !p) {
+    alert(lang === 'nl' ? 'Vul naam, restaurant en telefoonnummer in.' : 'Please fill in name, restaurant and phone number.');
+    return;
+  }
+  document.getElementById('cf').style.display = 'none';
+  document.getElementById('fs').classList.add('on');
+}
+
+// Tab switch
+function showTab(t) {
+  document.getElementById('pane-cal').style.display  = t==='cal'  ? 'block' : 'none';
+  document.getElementById('pane-form').style.display = t==='form' ? 'block' : 'none';
+  document.getElementById('tab-cal').classList.toggle('on',  t==='cal');
+  document.getElementById('tab-form').classList.toggle('on', t==='form');
+}
+
+// Smooth scroll
+document.querySelectorAll('a[href^="#"]').forEach(a => {
+  a.addEventListener('click', e => {
+    e.preventDefault();
+    const t = document.querySelector(a.getAttribute('href'));
+    if (t) t.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  });
+});
+</script>
+<script src="https://assets.calendly.com/assets/external/widget.js" async></script>
+</body>
+</html>
