@@ -518,8 +518,8 @@ footer{background:var(--ink);padding:44px 48px;}
     <a class="nav-a" href="#contact" data-en="Contact" data-nl="Contact">Contact</a>
   </div>
   <div class="lw">
-    <button class="lb on" onclick="setLang('en')">EN</button>
-    <button class="lb" onclick="setLang('nl')">NL</button>
+    <button class="lb" onclick="setLang('en')">EN</button>
+    <button class="lb on" onclick="setLang('nl')">NL</button>
   </div>
   <a class="ncta" href="#contact" data-en="Book free demo" data-nl="Gratis demo">Book free demo</a>
 </nav>
@@ -917,7 +917,7 @@ footer{background:var(--ink);padding:44px 48px;}
 
 <script>
 // Lang
-let lang='en';
+let lang='nl';
 function setLang(l){
   lang=l;
   document.querySelectorAll('.lb').forEach(b=>b.classList.remove('on'));
@@ -926,7 +926,8 @@ function setLang(l){
   document.documentElement.lang=l;
 }
 
-// Reveal
+// Init Dutch on load
+document.addEventListener('DOMContentLoaded', () => setLang('nl'));
 const obs=new IntersectionObserver(entries=>{entries.forEach((e,i)=>{if(e.isIntersecting)setTimeout(()=>e.target.classList.add('on'),i*60);});},{threshold:.07});
 document.querySelectorAll('.reveal').forEach(el=>obs.observe(el));
 
